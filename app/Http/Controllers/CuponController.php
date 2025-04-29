@@ -11,10 +11,11 @@ class CuponController extends Controller
     {
         try {
             $request->validate([
-                'codigo' => 'required',
+                'codigo' => 'required|regex:/^COD\d{4}$/',
                 'monto' => 'required|decimal:2|min:0.1'
             ], [
                 'codigo.required' => 'El codigo es obligatorio',
+                'codigo.regex' => 'Formato de codigo no válido',
                 'monto.required' => 'El monto es obligatorio',
                 'monto.decimal' => 'Formato de monto no válido',
                 'monto.min' => 'El monto debe ser mayor a 0'
@@ -131,6 +132,38 @@ class CuponController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al canjear el cupon: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function UpdateCupon(Request $request)
+    {
+        try {
+            $request->validate([
+                'codigo' => 'required|regex:/^COD\d{4}$/',
+                'monto' => 'required|decimal:2|min:0.1'
+            ], [
+                'codigo.required' => 'El codigo es obligatorio',
+                'codigo.regex' => 'Formato de codigo no válido',
+                'monto.required' => 'El monto es obligatorio',
+                'monto.decimal' => 'Formato de monto no válido',
+                'monto.min' => 'El monto debe ser mayor a 0'
+            ]);
+            $verifyCupon = Cupon::where('codigo', $request->codigo)->first();
+            if (!$verifyCupon) {
+                return response()->json([
+                    'message' => 'Este cupon no existe'
+                ], 400);
+            }
+            $verifyCupon->update([
+                'monto' => $request->monto
+            ]);
+            return response()->json([
+                'message' => 'Cupon actualizado con exito'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al actualizar el cupon: ' . $e->getMessage()
             ], 500);
         }
     }

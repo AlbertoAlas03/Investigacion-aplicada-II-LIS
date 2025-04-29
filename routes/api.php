@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/addCupon', [CuponController::class, 'addCupon']);
     Route::post('/deleteCupon', [CuponController::class, 'deleteCupon']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/updateCupon', [CuponController::class, 'UpdateCupon']);
 });
