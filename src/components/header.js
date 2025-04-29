@@ -12,7 +12,7 @@ const Header = ({ user }) => {
         try {
             const response = await logout();
             if (response) {
-                navigate("/login");
+                navigate("/");
             }
         } catch (error) {
             console.log("error al cerrar sesión: ", error);

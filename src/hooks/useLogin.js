@@ -33,8 +33,6 @@ const useLogin = () => {
 
         sessionStorage.setItem("user", JSON.stringify(data.usuario)); // Guarda el usuario en sessionStorage
         sessionStorage.setItem("token", JSON.stringify(data.token_access));
-        console.log("usuario login: ", data.usuario);
-        console.log("token guardado: ", data.token_access);
         setUser(data.usuario);
         setToken(data.token_access);
         return data; // Retorna la respuesta completa para manejarla en el componente

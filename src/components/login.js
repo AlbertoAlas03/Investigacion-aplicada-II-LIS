@@ -1,7 +1,8 @@
 import useLogin from "../hooks/useLogin"
 import usuario from "../assets/img/usuario-seguro.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
     const [error, setError] = useState(null);
@@ -11,6 +12,13 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const { login } = useLogin();
+    const { user } = useAuth();
+
+    useEffect(() => {
+        if (user) {
+            navigate('/home', { replace: true });
+        }
+    }, [user, navigate]);
 
     const togglePasswordVisibility = (e) => {
         e.preventDefault();
@@ -35,7 +43,7 @@ const Login = () => {
         try {
             const response = await login(userData);
             if (response.message === "Inicio de sesión exitoso") {
-                navigate('/', { replace: true });
+                navigate('/home', { replace: true });
             }
         } catch (error) {
             console.log("error al iniciar sesion: ", error.message);
@@ -94,9 +102,6 @@ const Login = () => {
                             </button>
                         </div>
                     </form>
-                    <p className="text-center mt-4" style={{ fontSize: '1.1rem' }}>
-                        ¿No tienes cuenta? <a type="button" onClick={() => navigate('/register')} className="text-decoration-none text-primary">Regístrate</a>
-                    </p>
                 </div>
             </div >
         </div >

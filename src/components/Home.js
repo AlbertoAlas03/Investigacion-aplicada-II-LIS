@@ -1,23 +1,30 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth"
-import { useNavigate } from "react-router-dom"
+import { replace, useNavigate } from "react-router-dom"
 import Header from "./header";
+import ReedemCoupon from "./ReedemCoupon";
 import useCupon from "../hooks/useCupon";
+import AddCoupon from "./AddCoupon";
+import UpdateCoupon from "./UpdateCoupon";
 
 const Home = () => {
 
     const { user } = useAuth();
     const navigate = useNavigate();
-    const { getCupon, cupon, deleteCupon, searchCupon, cuponCode } = useCupon();
+    const { getCupon, cupon, deleteCupon, searchCupon, cuponCode, reedemCoupon, addCupon, updateCupon } = useCupon();
     const [showDeleteModal, setshowDeleteModal] = useState(false);
     const [cuponSelected, setcuponSelected] = useState(null);
     const [cuponSearch, setcuponSearch] = useState('');
+    const [showReedemModal, setshowReedemModal] = useState(false);
+    const [showAddModal, setshowAddModal] = useState(false);
+    const [showUpdateModal, setshowUpdateModal] = useState(false);
+    const [updateMonto, setupdateMonto] = useState('');
 
     useEffect(() => {
         if (!user) {
-            navigate("/login");
+            navigate("/");
         }
-    }, [user])
+    }, [user, navigate])
 
     useEffect(() => {
         getCupon();
@@ -64,9 +71,26 @@ const Home = () => {
                         <i className="bi bi-search"></i>
                     </button>
                 </div>
-                <div className="col col-lg-2" style={{ marginBottom: '20px' }}>
-                    <button type="button" className="btn btn-success" > <i className="bi bi-plus"></i> Agregar cupon</button>
-                </div>
+                {
+                    user?.role === "empleado" ? (
+                        <div className="col col-lg-2" style={{ marginBottom: '20px' }}>
+                            <button
+                                type="button"
+                                className="btn btn-success"
+                                onClick={() => setshowAddModal(true)}
+                            > <i className="bi bi-plus"></i> Agregar cupon</button>
+                        </div>
+                    ) : (
+                        <button
+                            type="button"
+                            className="btn btn-success"
+                            style={{ marginBottom: '20px' }}
+                            onClick={() => setshowReedemModal(true)}
+                        >
+                            <i className="bi bi-receipt"></i> Canjear cupon
+                        </button>
+                    )
+                }
                 <div className="row">
                     {
                         cuponCode.length > 0 ? (
@@ -92,7 +116,7 @@ const Home = () => {
 
                                             <div className="mb-2" style={{ marginTop: '10px' }}>
                                                 {
-                                                    user?.role === "empleado" ? (
+                                                    user?.role === "empleado" && (
                                                         <>
                                                             <button
                                                                 type="button"
@@ -109,18 +133,15 @@ const Home = () => {
                                                                 type="button"
                                                                 className="btn btn-warning"
                                                                 style={{ margin: '10px' }}
+                                                                onClick={() => {
+                                                                    setcuponSelected(cupon.codigo)
+                                                                    setshowUpdateModal(true)
+                                                                    setupdateMonto(cupon.monto);
+                                                                }}
                                                             >
                                                                 <i className="bi bi-pencil-square"></i> Editar
                                                             </button>
                                                         </>
-
-                                                    ) : (
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-success"
-                                                        >
-                                                            <i className="bi bi-receipt"></i> Canjear
-                                                        </button>
                                                     )
                                                 }
                                             </div>
@@ -152,7 +173,7 @@ const Home = () => {
 
                                                 <div className="mb-2" style={{ marginTop: '10px' }}>
                                                     {
-                                                        user?.role === "empleado" ? (
+                                                        user?.role === "empleado" && (
                                                             <>
                                                                 <button
                                                                     type="button"
@@ -169,18 +190,16 @@ const Home = () => {
                                                                     type="button"
                                                                     className="btn btn-warning"
                                                                     style={{ margin: '10px' }}
+                                                                    onClick={() => {
+                                                                        setcuponSelected(cupon.codigo)
+                                                                        setshowUpdateModal(true)
+                                                                        setupdateMonto(cupon.monto);
+                                                                    }}
                                                                 >
                                                                     <i className="bi bi-pencil-square"></i> Editar
                                                                 </button>
                                                             </>
 
-                                                        ) : (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-success"
-                                                            >
-                                                                <i className="bi bi-receipt"></i> Canjear
-                                                            </button>
                                                         )
                                                     }
                                                 </div>
@@ -236,6 +255,30 @@ const Home = () => {
                     </div>
                 )
             }
+
+            <ReedemCoupon
+                show={showReedemModal}
+                onClose={() => setshowReedemModal(false)}
+                reedemCoupon={reedemCoupon}
+                getCupon={getCupon}
+            />
+
+            <AddCoupon
+                show={showAddModal}
+                onClose={() => setshowAddModal(false)}
+                getCupon={getCupon}
+                addCupon={addCupon}
+            />
+
+            <UpdateCoupon
+                show={showUpdateModal}
+                onClose={() => setshowUpdateModal(false)}
+                getCupon={getCupon}
+                updateCupon={updateCupon}
+                cuponSelected={cuponSelected}
+                setcuponSelected={setcuponSelected}
+                updateMonto={updateMonto}
+            />
         </>
     )
 }
