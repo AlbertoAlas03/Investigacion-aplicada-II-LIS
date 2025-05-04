@@ -1,0 +1,18 @@
+type Autor{
+  id: ID!
+  nombre: String!
+  libros: [Libro!]! @hasMany
+}
+
+type Libro {
+  id: ID!
+  titulo: String!
+  autor: Autor! @belongsTo
+}
+
+type Query {
+  autores: [Autor!]! @all
+  autor(id:ID!): Autor @first
+  libros: [Libro!]! @all
+  libro(id: ID!): Libro @first
+}
